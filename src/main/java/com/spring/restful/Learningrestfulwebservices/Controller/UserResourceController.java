@@ -32,7 +32,7 @@ public class UserResourceController {
 		return daoService.findAll();
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("{id}")
 	public User retrieveUsers(@PathVariable int id) {
 		User user = daoService.findOne(id);
 
