@@ -1,9 +1,11 @@
 package com.spring.restful.Learningrestfulwebservices.Controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -20,30 +22,30 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.spring.restful.Learningrestfulwebservices.ExceptionHandler.UserNotFoundException;
 import com.spring.restful.Learningrestfulwebservices.bean.User;
-import com.spring.restful.Learningrestfulwebservices.dao.UserDaoService;
+import com.spring.restful.Learningrestfulwebservices.repo.UserRepository;
 
 @RestController
-public class UserResourceController {
+public class UserJPAResourceController {
 
-	private UserDaoService daoService;
+	private UserRepository repository;
 
-	public UserResourceController(UserDaoService daoService) {
-		this.daoService = daoService;
+	public UserJPAResourceController(UserRepository repository) {
+		this.repository = repository;
 	}
 
-	@GetMapping("/users")
+	@GetMapping("/jpa/users")
 	public List<User> retrieveAllUsers() {
-		return daoService.findAll();
+		return repository.findAll();
 	}
 
 	@GetMapping("/users/{id}")
 	public EntityModel<User> retrieveUsers(@PathVariable int id) {
-		User user = daoService.findOne(id);
+		Optional<User> user = repository.findById(id);
 
-		if (user == null)
+		if (user.isEmpty())
 			throw new UserNotFoundException("Id: " + id);
 
-		EntityModel<User> entityModel = EntityModel.of(user);
+		EntityModel<User> entityModel = EntityModel.of(user.get());
 
 		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).retrieveAllUsers());
 
@@ -52,18 +54,18 @@ public class UserResourceController {
 		return entityModel;
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/jpa/users")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-		User savedUser = daoService.save(user);
+		User savedUser = repository.save(user);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId())
 				.toUri();
 		;
 		return ResponseEntity.created(location).build();
 	}
 
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
-		daoService.deleteById(id);
+		repository.deleteById(id);
 	}
 
 }
