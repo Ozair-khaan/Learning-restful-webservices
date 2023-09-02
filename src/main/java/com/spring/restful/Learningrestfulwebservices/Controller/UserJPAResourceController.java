@@ -38,7 +38,7 @@ public class UserJPAResourceController {
 		return repository.findAll();
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/jpa/users/{id}")
 	public EntityModel<User> retrieveUsers(@PathVariable int id) {
 		Optional<User> user = repository.findById(id);
 
