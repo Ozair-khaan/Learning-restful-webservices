@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.spring.restful.Learningrestfulwebservices.ExceptionHandler.UserNotFoundException;
+import com.spring.restful.Learningrestfulwebservices.bean.Post;
 import com.spring.restful.Learningrestfulwebservices.bean.User;
 import com.spring.restful.Learningrestfulwebservices.repo.UserRepository;
 
@@ -66,6 +67,14 @@ public class UserJPAResourceController {
 	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
 		repository.deleteById(id);
+	}
+
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrievePostForUser(@PathVariable int id) {
+		Optional<User> user = repository.findById(id);
+		if (user.isEmpty())
+			throw new UserNotFoundException("id" + id);
+		return user.get().getPosts();
 	}
 
 }
