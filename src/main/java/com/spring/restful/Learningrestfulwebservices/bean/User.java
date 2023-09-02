@@ -2,10 +2,17 @@ package com.spring.restful.Learningrestfulwebservices.bean;
 
 import java.time.LocalDate;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+@Entity(name = "user_details")
 public class User {
+	
+	@Id
+	@GeneratedValue
 	private Integer id;
 
 	@Size(min = 2, message = "Name should be atleast 2 character")
